@@ -1,8 +1,0 @@
-"0","therapie <- read_csv(""../data/therapie.csv"")
-
-therapie <- therapie |> 
-    mutate(id = as.factor(id),
-           bedingung = as.factor(bedingung))"
-"2","'""webr-r""' is not recognized as an internal or external command,
-operable program or batch file.
-"

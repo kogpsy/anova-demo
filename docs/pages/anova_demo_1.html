@@ -359,7 +359,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"library(tidyverse)\nlibrary(afex)\nlibrary(emmeans)\nlibrary(car) # für Levene-Test","id":1,"options":{"editor-max-height":"","editor-font-scale":"1","read-only":"false","warnings":"false # mute warnings about loaded packages","output":"true","out-height":"","editor-quick-suggestions":"false","out-width":"700px","autorun":"false","fig-cap":"","comment":"","fig-width":7,"fig-height":5,"warning":"true","label":"unnamed-chunk-1","context":"interactive","results":"markup","dpi":72,"classes":"","message":"true","editor-word-wrap":"true"}},{"code":"therapie <- read_csv(\"data/therapie.csv\")\n\ntherapie <- therapie |> \n    mutate(id = as.factor(id),\n           bedingung = as.factor(bedingung))","id":2,"options":{"editor-max-height":"","editor-font-scale":"1","read-only":"false","output":"true","out-height":"","editor-quick-suggestions":"false","out-width":"700px","autorun":"false","fig-cap":"","comment":"","fig-width":7,"fig-height":5,"warning":"true","label":"unnamed-chunk-2","context":"interactive","results":"markup","dpi":72,"classes":"","message":"true","editor-word-wrap":"true"}}];
+globalThis.qwebrCellDetails = [{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"setup","autorun":"true","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-1","message":"true","output":"true","fig-cap":""},"id":1,"code":"# download all libraries\nlibrary(tidyverse)\nlibrary(afex)\nlibrary(emmeans)\nlibrary(car) # für Levene-Test\n# load data in workspace\ndownload.file(\"https://kogpsy.github.io/anova-demo/data/therapie.csv\", \n              \"therapie.csv\")"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-2","message":"true","output":"true","fig-cap":""},"id":2,"code":"library(tidyverse)\nlibrary(afex)\nlibrary(emmeans)\nlibrary(car) # für Levene-Test"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-3","message":"true","output":"true","fig-cap":""},"id":3,"code":"therapie <- read_csv(\"therapie.csv\") # einlesen\n\ntherapie <- therapie |> \n    mutate(id = as.factor(id),\n           bedingung = as.factor(bedingung))\n\ntherapie # Datensatz anschauen"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-4","message":"true","output":"true","fig-cap":""},"id":4,"code":"therapie_long <- therapie |>\n    pivot_longer(cols = beginn:ende, \n                 names_to = \"messzeitpunkt\", \n                 values_to = \"wohlbefinden\")\n\ntherapie_long # anschauen\n\ntherapie_long <-  therapie_long |>  \n    mutate(messzeitpunkt = factor(messzeitpunkt, \n                                  levels = c(\"beginn\", \"mitte\", \"ende\")))\n\nlevels(therapie_long$messzeitpunkt) # Faktorstufenreihenfolge bestätigen"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-5","message":"true","output":"true","fig-cap":""},"id":5,"code":"therapie_means <- therapie_long |> \n  group_by(bedingung, messzeitpunkt) |> \n  summarize(wohlbefinden = mean(wohlbefinden))\n\ntherapie_means # Mittelwerte anschauen"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-6","message":"true","output":"true","fig-cap":""},"id":6,"code":"p <- therapie_means |> \n    ggplot(aes(x = messzeitpunkt, y = wohlbefinden, color = bedingung))\n\np +\n  geom_line(aes(group = bedingung)) +\n  geom_point(size = 3) +\n  scale_color_manual(values = c(\"#000000\", \"#E69F00\")) "},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-7","message":"true","output":"true","fig-cap":""},"id":7,"code":"p +\n  geom_line(aes(group = bedingung)) +\n  geom_point(size = 3) +\n  scale_color_manual(values = c(\"#000000\", \"#E69F00\")) +\n  scale_y_continuous(limits = c(1, 6), breaks = 1:6) +\n  scale_x_discrete(labels = c(\"Beginn\", \"Mitte\", \"Ende\")) +\n  theme_classic(base_size = 12) +\n  ggtitle(\"Wohlbefinden im Therapieverlauf\") +\n  xlab(\"Messzeitpunkt\") +\n  ylab(\"Wohlbefinden\") +\n  labs(color = \"Bedingung\")"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-8","message":"true","output":"true","fig-cap":""},"id":8,"code":"anovaMIXED <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), \n                    data = therapie_long)\n\nanovaMIXED_obs <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), observed = c(\"bedingung\", \"messzeitpunkt\"),\n                   data = therapie_long)\n\nanovaMIXED_eff <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), anova_table = list(es = c(\"ges\", \"pes\")),\n                    data = therapie_long)\n\nsummary(anovaMIXED)"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-9","message":"true","output":"true","fig-cap":""},"id":9,"code":"anovaMIXED$anova_table\nanovaMIXED_obs$anova_table\nanovaMIXED_eff$anova_table"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-10","message":"true","output":"true","fig-cap":""},"id":10,"code":"leveneTest(wohlbefinden ~ bedingung, data = therapie_long, center = median)"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-11","message":"true","output":"true","fig-cap":""},"id":11,"code":"p <- afex_plot(object = anovaMIXED,\n               x = \"messzeitpunkt\",\n               trace = \"bedingung\",\n               error = \"none\",\n               legend_title = \"Bedingung\")\n\np"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-12","message":"true","output":"true","fig-cap":""},"id":12,"code":"p +\n  theme_classic() +                               # Hintergrund weiss\n  ggtitle(\"Wohlbefinden im Therapieverlauf\") +    # Titel hinzufügen\n  xlab(\"Messzeitpunkt\") +                         # x-Achse beschriften\n  ylab(\"Wohlbefinden\")                            # y-Achse beschriften"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-13","message":"true","output":"true","fig-cap":""},"id":13,"code":"joint_tests(object = anovaMIXED, by = \"bedingung\")"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-14","message":"true","output":"true","fig-cap":""},"id":14,"code":"result <- emmeans(object = anovaMIXED, specs = ~ messzeitpunkt * bedingung)"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-15","message":"true","output":"true","fig-cap":""},"id":15,"code":"pairs(result, simple = \"messzeitpunkt\", adjust = \"tukey\")"},{"options":{"editor-word-wrap":"true","dpi":72,"fig-width":7,"editor-font-scale":"1","warning":"true","classes":"","editor-max-height":"","results":"markup","comment":"","out-width":"700px","fig-height":5,"context":"interactive","autorun":"false","out-height":"","editor-quick-suggestions":"false","read-only":"false","label":"unnamed-chunk-16","message":"true","output":"true","fig-cap":""},"id":16,"code":"result_poly <- emmeans(object = anovaMIXED, specs = ~ messzeitpunkt | bedingung)\ncontrast(object = result_poly, method = \"poly\", adjust = \"none\")"}];
 
 </script>
 <script type="module">
@@ -1942,20 +1942,107 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </header>
 
 
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <section id="packages-laden" class="level2">
 <h2 class="anchored" data-anchor-id="packages-laden">Packages laden</h2>
-<div id="qwebr-insertion-location-1"></div>
+<div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="a-daten" class="level2">
 <h2 class="anchored" data-anchor-id="a-daten">A) Daten</h2>
-<ol type="1">
-<li>Lesen Sie den Datensatz <code>therapie</code> ein und konvertieren Sie die Variablen <code>id</code> und <code>bedingung</code> zu Faktoren:</li>
-</ol>
-<div id="qwebr-insertion-location-2"></div>
+<section id="daten-einlesen-und-konvertieren" class="level3">
+<h3 class="anchored" data-anchor-id="daten-einlesen-und-konvertieren">1) Daten einlesen und konvertieren</h3>
+<p>Lesen Sie den Datensatz <code>therapie</code> ein und konvertieren Sie die Variablen <code>id</code> und <code>bedingung</code> zu Faktoren:</p>
+<div id="qwebr-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="datensatz-transformieren" class="level3">
+<h3 class="anchored" data-anchor-id="datensatz-transformieren">2) Datensatz transformieren</h3>
+<p>Führen Sie eine wide-to-long Transformation durch und bilden Sie damit einen Dataframe <code>therapie_long</code> mit einem messwiederholten Faktor <code>messzeitpunkt</code> und der (Outcome-)Variablen <code>wohlbefinden</code>.</p>
+<p>Definieren Sie die Variable <code>messzeitpunkt</code> als Faktor mit den Faktorstufen “beginn”, “mitte” und “ende” (in dieser Reihenfolge).</p>
+<div id="qwebr-insertion-location-4"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="mittelwerte-berechnen" class="level3">
+<h3 class="anchored" data-anchor-id="mittelwerte-berechnen">3) Mittelwerte berechnen</h3>
+<p>Berechnen Sie mittels <code>group_by()</code> und <code>summarize()</code> die Mittelwerte von <code>wohlbefinden</code> getrennt nach <code>bedingung</code> und <code>messzeitpunkt</code> und speichern Sie diese in einem Dataframe <code>therapie_means</code> ab.</p>
+<div id="qwebr-insertion-location-5"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Wir können hier schon sehen, dass das Wohlbefinden - rein deskriptiv - in der Kontrollgruppe eher abnimmt und in der Therapiegruppe eher zunimmt.</p>
+</section>
+</section>
+<section id="b-plotten-mit-ggplot2" class="level2">
+<h2 class="anchored" data-anchor-id="b-plotten-mit-ggplot2">B) Plotten mit <code>{ggplot2}</code></h2>
+<section id="plotten-der-mittelwerte" class="level3">
+<h3 class="anchored" data-anchor-id="plotten-der-mittelwerte">1) Plotten der Mittelwerte</h3>
+<p>Plotten Sie die oben berechneten Mittelwerte mittels eines Liniendiagramms mit zusätzlichen Punkten mit den drei Messzeitpunkten auf der X-Achse, den Wohlbefindens-Werten auf der Y-Achse und mit Bedingung als (farbliche) Gruppierungsvariable.</p>
+<p>Beachten Sie, dass <code>geom_line()</code> ein zusätzliches <code>group</code>-Argument in <code>aes()</code> benötigt, um zu wissen, welche Punkte mit Linien verbunden werden sollen. Das allgemeine <code>color = bedingung</code> der <code>ggplot()</code> Funktion genügt hier nicht (wird aber trotzdem benötigt, um Linien und Punkte mit nach Geschlecht unterschiedlichen Farben zu erhalten).</p>
+<div id="qwebr-insertion-location-6"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Hier wird automatisch nur derjenige Auschnitt der <code>wohlbefindens</code>-Skala dargestellt, in dem sich die zu plottenden Mittelwerte befinden (diese liegen zwischen 3.33 und 4.23, s.o.). Dadurch wirkt es hier so, als gäbe es extrem grosse Mittelwertsunterschiede. Relativ zur Gesamtskala (1 bis 6) sind diese Unterschiede aber nicht ganz so bedeutsam wie es hier den Anschein erweckt.</p>
+</section>
+<section id="plot-verfeinern" class="level3">
+<h3 class="anchored" data-anchor-id="plot-verfeinern">2) Plot verfeinern</h3>
+<p>Daher plotten wir noch einmal und geben jetzt mit Hilfe von <code>scale_y_continuous()</code> an, dass die Y-Achse von <code>1</code> bis <code>6</code> gehen soll. Ausserdem soll der Plot noch (weiter) verschönert werden: er soll einen weissen Hintergrund bekommen sowie einen Titel und bessere korrektere Achsen- und Legendenbeschriftungen.</p>
+<p>Auch die Beschriftung der X-Achse lässt noch zu Wünschen übrig. Dafür benutzen wir <code>scale_x_discrete()</code> und geben im Argument <code>labels</code> einen character vector mit den richtigen (gross geschriebenen) Zeitpunkten an.</p>
+<p>Das Hauptargument von <code>scale_y_continuous()</code> ist <code>limits = c(wert_beginn, wert_ende)</code>, ausserdem kann mit <code>breaks</code> festgelegt werden, welche Werte-Abstände (“Ticks”) auf der Achse dargestellt werden (Probieren Sie es zuerst ohne das <code>breaks</code>-Argument).</p>
+<div id="qwebr-insertion-location-7"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+</section>
+<section id="c-zweifaktorielle-anova-mit-messwiederholung-mit-afex-und-emmeans" class="level2">
+<h2 class="anchored" data-anchor-id="c-zweifaktorielle-anova-mit-messwiederholung-mit-afex-und-emmeans">C) Zweifaktorielle ANOVA mit Messwiederholung mit afex und emmeans</h2>
+<section id="mixed-design-anova" class="level3">
+<h3 class="anchored" data-anchor-id="mixed-design-anova">1) Mixed-Design-ANOVA</h3>
+<p>Führen Sie die Mixed-Design-ANOVA mit <code>aov_4()</code> durch</p>
+<div id="qwebr-insertion-location-8"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Mauchly-Test ist nicht signifikant, daher kann die Sphärizitätsannahme aufrecht-erhalten werden (keine Sphärizitätskorrektur erforderlich).</p>
+<p>Für die Effektstärke Generalized Eta-Square (ges) brauchen wir noch den ANOVA-Table:</p>
+<div id="qwebr-insertion-location-9"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Hier werden standardmässig (unabhängig vom Ergebnis des Mauchly-Tests) die Greenhouse-Geisser(GG)-korrigierten F-Tests berichtet.</p>
+<p>Für den Levene-Test benutzen wir <code>leveneTest()</code> aus car</p>
+<div id="qwebr-insertion-location-10"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>nicht signifikant (alpha = 0.10), Voraussetzung der Homoskedastizität erfüllt</p>
+</section>
+<section id="afex-plot-der-mittelwerte" class="level3">
+<h3 class="anchored" data-anchor-id="afex-plot-der-mittelwerte">2) afex-Plot der Mittelwerte</h3>
+<p>Für den Plot verwenden wir die Funktion <code>afex_plot(object, x)</code>.</p>
+<p>Als erstes Argument der Funktion wird das Ergebnisobjekt der ANOVA benötigt. Für das Argument <code>x =</code> muss die Gruppierungsvariable/Faktor angegeben werden. Für das Argument <code>trace =</code> muss derjenige Faktor angegeben werden, für den separate Linien (mit Legende) ausgegeben werden sollen. Für Mixed-Designs sind weder die “normalen” noch die “within”-Fehlerbalken auf alle geschätzten Mittelwerte anwendbar. Deshalb wird empfohlen, bei Plots in Mixed-Designs auf Fehlerbalken/Konfidenzintervalle zu verzichten (<code>error = "none"</code>).</p>
+<p>In einem Mixed-Design wie unserem ist es am sinnvollsten, den Faktor <code>messzeitpunkt</code> auf der X-Achse darzustellen und getrennte Linien für den Between-Faktor <code>bedingung</code> zu verwenden. Der Legendentitel kann mit dem Argument <code>legend.title</code> angepasst werden.</p>
+<p><code>afex_plot()</code> erstellt ein ggplot-Objekt, welches wir weiter verändern können.</p>
+<div id="qwebr-insertion-location-11"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>weitere Optionen unter <code>help(afex_plot)</code></p>
+<p>Verschönern Sie den Plot, indem Sie folgende Elemente hinzufügen:</p>
+<div id="qwebr-insertion-location-12"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="bedingte-haupteffekte" class="level3">
+<h3 class="anchored" data-anchor-id="bedingte-haupteffekte">3) Bedingte Haupteffekte</h3>
+<p>Bedingte Haupteffekte erhalten wir mit der Funktion <code>joint_tests(object, by)</code> aus dem <code>emmeans</code>-Package. Als erstes Argument wird das afex-Ergebnisobjekt der ANOVA benötigt. Für das Argument <code>by</code> muss derjenige Faktor angegeben werden, getrennt für dessen Stufen wir die bedingten Haupteffekte des jeweils anderen Faktors erhalten wollen.</p>
+<p>Hier interessieren wir uns für die bedingten Haupteffekte des within-subject Faktors <code>messzeitpunkt</code> (getrennt für - by - die Stufen des between-subjects Faktors <code>bedingung</code>).</p>
+<div id="qwebr-insertion-location-13"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="post-hoc-einzelvergleiche-für-die-bedingten-haupteffekte" class="level3">
+<h3 class="anchored" data-anchor-id="post-hoc-einzelvergleiche-für-die-bedingten-haupteffekte">4) Post-hoc-Einzelvergleiche für die bedingten Haupteffekte</h3>
+<p>Die bedingten Haupteffekte zeigen nur, dass es insgesamt signifikante Unterschiede zwischen den Messzeitpunkten gibt. Jetzt wollen wir noch wissen, welche Messzeitpunkten sich jeweils signifikant unterscheiden (und welche nicht).</p>
+<p>Um diese Einzelvergleiche/Kontraste durchführen zu können, muss zuerst ein emmeans-Objekt (hier: result) erstellt werden, und zwar für die Interaktion <code>messzeitpunkt * bedingung</code>:</p>
+<div id="qwebr-insertion-location-14"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Post-hoc-Einzelvergleiche zwischen den Zeitpunkten (simple = “messzeitpunkt”) getrennt für die beiden Bedingungen:</p>
+<div id="qwebr-insertion-location-15"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Polynomiale Trendtests in Bezug auf den Zeitverlauf (simple = “messzeitpunkt”) getrennt für die beiden Bedingungen:</p>
+<div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 
 
+</section>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{mayer,

@@ -1,6 +1,6 @@
 project:
   type: website
-  ressources: 
+  resources: 
     - data/therapie.csv
   output-dir: docs
   render:
@@ -33,9 +33,3 @@ format:
       - styles/dark.scss
 editor:
   render-on-save: true
-
-
-
-resources:
-    - my-data.csv         # Include just the CSV
-    - my-data-directory/* # Include all files
