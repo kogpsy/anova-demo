@@ -1,0 +1,15 @@
+{
+  "hash": "efee55fea2404932bd50a3a1dd8fe42e",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Anova Demo\"\nauthor: \"Boris Mayer\"\nformat: \n  html:\n    resources:\n      - data/therapie.csv         # Include just the CSV\nengine: knitr\nfilters:\n  - webr\n# webr:\n#   packages:\n#     - tidyverse\nlicense: CC BY\ncitation: true\n---\n\n\n\n\n## Packages laden\n\n```{webr-r}\n#| warnings: false # mute warnings about loaded packages\nlibrary(tidyverse)\nlibrary(afex)\nlibrary(emmeans)\nlibrary(car) # für Levene-Test\n```\n\n\n\n\n## A) Daten\n\n\n1) Lesen Sie den Datensatz `therapie` ein und konvertieren Sie die Variablen `id` und `bedingung` zu Faktoren:\n\n```{webr-r}\ntherapie <- read_csv(\"data/therapie.csv\")\n\ntherapie <- therapie |> \n    mutate(id = as.factor(id),\n           bedingung = as.factor(bedingung))\n```\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

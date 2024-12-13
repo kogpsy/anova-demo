@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+  - index.qmd
+  - pages/*.qmd
+website:
+  title: Anova Demo
+  site-url: https://psylu.github.io/anova_demo
+  reader-mode: true
+  navbar:
+    background: secondary
+    left:
+    - href: pages/anova_demo_1.qmd
+
+  sidebar:
+    style: floating
+    search: true
+    contents:
+    - pages/anova_demo_1.qmd
+format:
+  html:
+    theme:
+      light:
+      - flatly
+      - styles/light.scss
+      dark:
+      - darkly
+      - styles/dark.scss
+editor:
+  render-on-save: true

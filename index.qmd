@@ -1,0 +1,9 @@
+---
+title: "Welcome"
+about:
+    template: jolla
+---
+
+
+KWM Labmeeting / Forschungskolloquium
+18. Dezember 2024

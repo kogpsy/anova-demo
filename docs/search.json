@@ -1,0 +1,39 @@
+[
+  {
+    "objectID": "pages/anova_demo_1.html",
+    "href": "pages/anova_demo_1.html",
+    "title": "Anova Demo",
+    "section": "",
+    "text": "Please enable JavaScript to experience the dynamic code cell content on this page.",
+    "crumbs": [
+      "Anova Demo"
+    ]
+  },
+  {
+    "objectID": "pages/anova_demo_1.html#packages-laden",
+    "href": "pages/anova_demo_1.html#packages-laden",
+    "title": "Anova Demo",
+    "section": "",
+    "text": "Please enable JavaScript to experience the dynamic code cell content on this page.",
+    "crumbs": [
+      "Anova Demo"
+    ]
+  },
+  {
+    "objectID": "pages/anova_demo_1.html#a-daten",
+    "href": "pages/anova_demo_1.html#a-daten",
+    "title": "Anova Demo",
+    "section": "A) Daten",
+    "text": "A) Daten\n\nLesen Sie den Datensatz therapie ein und konvertieren Sie die Variablen id und bedingung zu Faktoren:\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.",
+    "crumbs": [
+      "Anova Demo"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome",
+    "section": "",
+    "text": "KWM Labmeeting / Forschungskolloquium 18. Dezember 2024"
+  }
+]

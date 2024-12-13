@@ -1,0 +1,43 @@
+---
+title: "Anova Demo"
+author: "Boris Mayer"
+format: 
+  html:
+    resources:
+      - data/therapie.csv         # Include just the CSV
+engine: knitr
+filters:
+  - webr
+# webr:
+#   packages:
+#     - tidyverse
+license: CC BY
+citation: true
+---
+
+## Packages laden
+
+```{webr-r}
+#| warnings: false # mute warnings about loaded packages
+library(tidyverse)
+library(afex)
+library(emmeans)
+library(car) # für Levene-Test
+```
+
+
+
+
+## A) Daten
+
+
+1) Lesen Sie den Datensatz `therapie` ein und konvertieren Sie die Variablen `id` und `bedingung` zu Faktoren:
+
+```{webr-r}
+therapie <- read_csv("data/therapie.csv")
+
+therapie <- therapie |> 
+    mutate(id = as.factor(id),
+           bedingung = as.factor(bedingung))
+```
+
