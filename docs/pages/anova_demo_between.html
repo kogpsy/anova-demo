@@ -8,7 +8,7 @@
 
 <meta name="author" content="Boris Mayer">
 
-<title>Anova Demo</title>
+<title>2 x 2 Between Design ANOVA – Anova Demo</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -40,14 +40,14 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-4276cd9111b1ed39846b82331767bba2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-859e3d0356495a088af2667ba90e55c1.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b12f2568ecbe55642fee6aa00bd082.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-b2511bcbb01c2159fd96a78deb42ffd9.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
-  "location": "navbar",
+  "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "end",
-  "type": "overlay",
+  "panel-placement": "start",
+  "type": "textbox",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -369,7 +369,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# download all libraries\nlibrary(tidyverse)\nlibrary(afex)\nlibrary(emmeans)\nlibrary(car) # für Levene-Test\n# load data in workspace\ndownload.file(\"https://kogpsy.github.io/anova-demo/data/therapie.csv\", \n              \"therapie.csv\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"setup","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(tidyverse)\nlibrary(afex)\nlibrary(emmeans)\nlibrary(car) # für Levene-Test","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"therapie <- read_csv(\"therapie.csv\") # einlesen\n\ntherapie <- therapie |> \n    mutate(id = as.factor(id),\n           bedingung = as.factor(bedingung))\n\ntherapie # Datensatz anschauen","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"therapie_long <- therapie |>\n    pivot_longer(cols = beginn:ende, \n                 names_to = \"messzeitpunkt\", \n                 values_to = \"wohlbefinden\")\n\ntherapie_long # anschauen","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"therapie_long <-  therapie_long |>  \n    mutate(messzeitpunkt = factor(messzeitpunkt, \n                                  levels = c(\"beginn\", \"mitte\", \"ende\")))\n\nlevels(therapie_long$messzeitpunkt) # Faktorstufenreihenfolge bestätigen","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"therapie_means <- therapie_long |> \n  group_by(bedingung, messzeitpunkt) |> \n  summarize(wohlbefinden = mean(wohlbefinden))\n\ntherapie_means # Mittelwerte anschauen","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaMIXED <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), \n                    data = therapie_long)\n\nsummary(anovaMIXED)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaMIXED$anova_table","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"leveneTest(wohlbefinden ~ bedingung, data = therapie_long, center = median)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaMIXED_obs <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), observed = c(\"bedingung\", \"messzeitpunkt\"),\n                   data = therapie_long)\nanovaMIXED_obs$anova_table\nanovaMIXED_eff$anova_table","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaMIXED_eff <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), anova_table = list(es = c(\"ges\", \"pes\")),\n                    data = therapie_long)\n\nanovaMIXED_eff$anova_table","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p <- afex_plot(object = anovaMIXED,\n               x = \"messzeitpunkt\",\n               trace = \"bedingung\",\n               error = \"none\",\n               legend_title = \"Bedingung\")\n\np","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p +\n  theme_classic() +                               # Hintergrund weiss\n  ggtitle(\"Wohlbefinden im Therapieverlauf\") +    # Titel hinzufügen\n  xlab(\"Messzeitpunkt\") +                         # x-Achse beschriften\n  ylab(\"Wohlbefinden\")                            # y-Achse beschriften","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"joint_tests(object = anovaMIXED, by = \"bedingung\")","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"result <- emmeans(object = anovaMIXED, specs = ~ messzeitpunkt * bedingung)","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pairs(result, simple = \"messzeitpunkt\", adjust = \"tukey\")","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"result_poly <- emmeans(object = anovaMIXED, specs = ~ messzeitpunkt | bedingung)\ncontrast(object = result_poly, method = \"poly\", adjust = \"none\")","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# download all libraries\nlibrary(tidyverse)\nlibrary(afex)\nlibrary(emmeans)\nlibrary(car)\n# load data in workspace\ndownload.file(\"https://kogpsy.github.io/anova-demo/data/akademisch.csv\", \n              \"akademisch.csv\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"setup","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(tidyverse)\nlibrary(afex)\nlibrary(emmeans)\nlibrary(car)","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"akademisch <- read_csv(\"akademisch.csv\") |> \n    mutate(bildung_vater = factor(bildung_vater, levels = (c(\"niedrig\", \"hoch\"))),\n           bildung_mutter = factor(bildung_mutter, levels = (c(\"niedrig\", \"hoch\"))))\n\nakademisch # Datensatz anschauen","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"akademisch |> \n  group_by(bildung_mutter, bildung_vater) |> \n  summarize(mean_swk = mean(akad_swk),\n            .groups = \"drop\")","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaBETWEEN <- aov_4(akad_swk ~ bildung_mutter * bildung_vater + (1 | id), data = akademisch)\n\nsummary(anovaBETWEEN)","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"leveneTest(akad_swk ~ bildung_mutter * bildung_vater, data = akademisch, center = median)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"summary(lm(akad_swk ~ bildung_mutter * bildung_vater, data = akademisch))","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaBETWEEN_obs <- aov_4(akad_swk ~ bildung_mutter * bildung_vater + (1 | id), data = akademisch, observed = c(\"bildung_mutter\", \"bildung_vater\"))\n\nsummary(anovaBETWEEN_obs)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaBETWEEN_obs$Anova\n\nanovaBETWEEN_obs$Anova$`Sum Sq` |> round(3)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaBETWEEN_obs2 <- aov_4(akad_swk ~ bildung_mutter * bildung_vater + (1 | id), data = akademisch, observed = c(\"bildung_mutter\", \"bildung_vater\"), anova_table = list(es = c(\"ges\", \"pes\")))\n\nsummary(anovaBETWEEN_obs2)","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anovaBETWEEN_eff <- aov_4(akad_swk ~ bildung_mutter * bildung_vater + (1 | id), data = akademisch, anova_table = list(es = c(\"ges\", \"pes\")))\n\nsummary(anovaBETWEEN_eff)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"afex_plot(object = anovaBETWEEN,\n          x = \"bildung_mutter\",\n          trace = \"bildung_vater\")","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p1 <- afex_plot(object = anovaBETWEEN,\n               x = \"bildung_mutter\",\n               trace = \"bildung_vater\",\n               mapping = c(\"color\", \"shape\"), \n               # Faktorstufen sollen unterschiedliche Farben und Formen erhalten\n               dodge = 0.2, \n               # Verschiebung der Faktorstufen reduzieren (default: 0.5)\n               error_ci = FALSE, \n               # Standardfehler statt Konfidenzintervalle als Fehlermass\n               legend_title = \"Bildung Vater\",\n               # Legendentitel ist nur hier anpassbar! (nicht mit ggplot())\n               data_plot = FALSE) \n               # Datenpunkte weglassen","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p1 +\n    scale_color_manual(values = c(\"#000000\", \"#E69F00\")) +\n    scale_y_continuous(limits = c(4, 6)) +\n    theme_classic() +                                     \n    ggtitle(\"Bildung der Eltern und Selbstwirksamkeit\") +    \n    xlab(\"Bildung Mutter\") +                        \n    ylab(\"Akademische SWK\")","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"joint_tests(anovaBETWEEN, by = \"bildung_vater\")","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"joint_tests(anovaBETWEEN, by = \"bildung_mutter\")","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"compar <- emmeans(anovaBETWEEN, ~ bildung_mutter * bildung_vater)","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pairs(compar, simple = \"bildung_mutter\")","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pairs(compar, simple = \"bildung_vater\")","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pairs(compar, adjust = \"none\")\npairs(compar, adjust = \"tukey\")","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pwpm(compar)","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"plot(compar, comparisons = TRUE)","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pwpp(compar)","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1623,48 +1623,48 @@ globalThis.qwebrExecuteCode = async function (
 
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="nav-sidebar floating nav-fixed fullcontent">
+<body class="nav-sidebar floating fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">Anova Demo</span>
-    </a>
-  </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link active" href="../pages/anova_demo_1.html" aria-current="page"> 
-<span class="menu-text">Anova Demo</span></a>
-  </li>  
-</ul>
-          </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
-  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
-  <div class="quarto-reader-toggle-btn">
-  <i class="bi"></i>
-  </div>
-</a>
-</div>
-      </div> <!-- /container-fluid -->
-    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/anova_demo_1.html">Anova Demo</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/anova_demo_between.html">2 x 2 Between Design ANOVA</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -1674,9 +1674,22 @@ globalThis.qwebrExecuteCode = async function (
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Anova Demo</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
@@ -1686,8 +1699,14 @@ globalThis.qwebrExecuteCode = async function (
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/anova_demo_1.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Anova Demo</span></a>
+  <a href="../pages/anova_demo_between.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">2 x 2 Between Design ANOVA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/anova_demo_mixed.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2 x 3 Mixed Design ANOVA</span></a>
   </div>
 </li>
     </ul>
@@ -1985,7 +2004,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Anova Demo</h1>
+<h1 class="title">2 x 2 Between Design ANOVA</h1>
 </div>
 
 
@@ -2019,79 +2038,95 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <h2 class="anchored" data-anchor-id="a-daten">A) Daten</h2>
 <section id="daten-einlesen-und-konvertieren" class="level3">
 <h3 class="anchored" data-anchor-id="daten-einlesen-und-konvertieren">1) Daten einlesen und konvertieren</h3>
-<p>Lesen Sie den Datensatz <code>therapie</code> ein und konvertieren Sie die Variablen <code>id</code> und <code>bedingung</code> zu Faktoren:</p>
+<p>Lesen Sie den Datensatz <code>akademisch</code> ein und konvertieren Sie die Variablen <code>bildung_vater</code> und <code>bildung_mutter</code> zu Faktoren. Definieren Sie für beide <code>niedrig</code> als erste Faktorstufe und <code>hoch</code> als zweite Faktorstufe.</p>
 <div id="qwebr-insertion-location-3"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="datensatz-transformieren" class="level3">
-<h3 class="anchored" data-anchor-id="datensatz-transformieren">2) Datensatz transformieren</h3>
-<p>Führen Sie eine wide-to-long Transformation durch und bilden Sie damit einen Dataframe <code>therapie_long</code> mit einer Variable <code>messzeitpunkt</code> und der (Outcome-)Variablen <code>wohlbefinden</code>.</p>
-<div id="qwebr-insertion-location-4"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Definieren Sie die Variable <code>messzeitpunkt</code> als Faktor mit den Faktorstufen “beginn”, “mitte” und “ende” (in dieser Reihenfolge).</p>
-<div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="mittelwerte-berechnen" class="level3">
 <h3 class="anchored" data-anchor-id="mittelwerte-berechnen">3) Mittelwerte berechnen</h3>
-<p>Berechnen Sie mittels <code>group_by()</code> und <code>summarize()</code> die Mittelwerte von <code>wohlbefinden</code> getrennt nach <code>bedingung</code> und <code>messzeitpunkt</code> und speichern Sie diese in einem Dataframe <code>therapie_means</code> ab.</p>
+<p>Berechnen Sie mittels <code>group_by()</code> und <code>summarize()</code> die Mittelwerte von <code>akad_swk</code> getrennt nach <code>bildung_vater</code> und <code>bildung_mutter</code>.</p>
+<div id="qwebr-insertion-location-4"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+</section>
+<section id="b-2-x-2-anova-mit-afex-und-emmeans" class="level2">
+<h2 class="anchored" data-anchor-id="b-2-x-2-anova-mit-afex-und-emmeans">B) 2 x 2 ANOVA mit afex und emmeans</h2>
+<section id="anova-modell-berechnen" class="level3">
+<h3 class="anchored" data-anchor-id="anova-modell-berechnen">1) ANOVA-Modell berechnen</h3>
+<p>Führen Sie die 2x2 Between ANOVA mit <code>aov_4()</code> durch:</p>
+<div id="qwebr-insertion-location-5"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Für den Levene-Test benutzen wir <code>leveneTest()</code> aus car:</p>
 <div id="qwebr-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Wir können hier schon sehen, dass das Wohlbefinden - rein deskriptiv - in der Kontrollgruppe eher abnimmt und in der Therapiegruppe eher zunimmt.</p>
-</section>
-</section>
-<section id="b-zweifaktorielle-mixed-design-anova-mit-afex-und-emmeans" class="level2">
-<h2 class="anchored" data-anchor-id="b-zweifaktorielle-mixed-design-anova-mit-afex-und-emmeans">B) Zweifaktorielle Mixed Design ANOVA mit afex und emmeans</h2>
-<section id="mixed-design-anova" class="level3">
-<h3 class="anchored" data-anchor-id="mixed-design-anova">1) Mixed Design ANOVA</h3>
-<p>Führen Sie die Mixed Design ANOVA mit <code>aov_4()</code> durch</p>
+<p>Leider erhalten wir keinen Gesamteffekt. Diesen bekommen wir als letzte Zeile hier:</p>
 <div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Mauchly-Test ist nicht signifikant, daher kann die Sphärizitätsannahme aufrecht-erhalten werden (keine Sphärizitätskorrektur erforderlich).</p>
-<p>Für die Effektstärke Generalized Eta-Square (ges) brauchen wir noch den ANOVA-Table:</p>
+</section>
+<section id="fokus-effektgrössen" class="level3">
+<h3 class="anchored" data-anchor-id="fokus-effektgrössen">2) Fokus: Effektgrössen</h3>
+<p>Standardmässig werden (wie z.B. auch in jamovi oder SPSS) die partiellen Effektgrössen berechnet. Diese werden bei experimentell manipulierten Faktoren empfohlen. Bei beobachteten Faktoren wie in diesem Beispiel sollte man auf nicht-partielle Effektgrössen zurückgreifen:</p>
 <div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Hier werden standardmässig (unabhängig vom Ergebnis des Mauchly-Tests) die Greenhouse-Geisser(GG)-korrigierten F-Tests berichtet.</p>
-<p>Für den Levene-Test benutzen wir <code>leveneTest()</code> aus car</p>
+<p>Um das besser zu verstehen, müssen wir dem Modell noch etwas “unter die Haube schauen”:</p>
 <div id="qwebr-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>nicht signifikant (alpha = 0.10), Voraussetzung der Homoskedastizität erfüllt</p>
+<p>Wir berechnen beispielhaft das partielle <span class="math inline">\(\hat\eta^2_p\)</span> und nicht-partielle <span class="math inline">\(\hat\eta^2\)</span> für den Haupteffekt von “Bildung Mutter (BM)”:</p>
+<p><span class="math inline">\(\hat\eta^2_{pBM} = \frac{QS_{BM}}{QS_{BM} + QS_{Res}} = \frac{9.122}{9.122 + 143.216} = 0.05988\)</span></p>
+<p><span class="math inline">\(\hat\eta^2_{pBM} = \frac{QS_{BM}}{QS_{TOT}} = \frac{9.122}{9.122 + 0.027 + 1.487 + 143.216} = 0.0592907\)</span></p>
+<p>Wenn die Faktoren als <code>observed</code> definiert sind, kann man beide (partielle und nicht-partielle) Effektgrössen auch direkt anfordern:</p>
 <div id="qwebr-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Wenn das nicht der Fall ist, wird bei Anforderung beider Effektgrössen <code>pes</code> und <code>ges</code> für beide die partielle Effektgrösse ausgegeben, weil diese bei experimentell manipulierten Variablen auch dem <code>ges</code> (generalized eta square) entspricht:</p>
 <div id="qwebr-insertion-location-11"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Man kann auch nur <strong>einen</strong> von beiden Faktoren als <code>observed</code> definieren, dann wird nur die Quadratsumme dieses Faktors im Nenner der Effektgrösse des anderen (manipulierten) Faktors sowie der Interaktion berücksichtigt. Es handelt sich dann um eine semi-partielle Effektgrösse. Diese Möglichkeit schauen wir hier aber nicht an.</p>
 </section>
 <section id="afex-plot-der-mittelwerte" class="level3">
 <h3 class="anchored" data-anchor-id="afex-plot-der-mittelwerte">2) afex-Plot der Mittelwerte</h3>
 <p>Für den Plot verwenden wir die Funktion <code>afex_plot(object, x)</code>.</p>
-<p>Als erstes Argument der Funktion wird das Ergebnisobjekt der ANOVA benötigt. Für das Argument <code>x =</code> muss die Gruppierungsvariable/Faktor angegeben werden. Für das Argument <code>trace =</code> muss derjenige Faktor angegeben werden, für den separate Linien (mit Legende) ausgegeben werden sollen. Für Mixed-Designs sind weder die “normalen” noch die “within”-Fehlerbalken auf alle geschätzten Mittelwerte anwendbar. Deshalb wird empfohlen, bei Plots in Mixed-Designs auf Fehlerbalken/Konfidenzintervalle zu verzichten (<code>error = "none"</code>).</p>
-<p>In einem Mixed-Design wie unserem ist es am sinnvollsten, den Faktor <code>messzeitpunkt</code> auf der X-Achse darzustellen und getrennte Linien für den Between-Faktor <code>bedingung</code> zu verwenden. Der Legendentitel kann mit dem Argument <code>legend.title</code> angepasst werden.</p>
-<p><code>afex_plot()</code> erstellt ein ggplot-Objekt, welches wir weiter verändern können.</p>
+<p>Als erstes Argument der Funktion wird das Ergebnisobjekt der ANOVA benötigt. Für das Argument <code>x =</code> muss die Gruppierungsvariable/Faktor angegeben werden. Für das Argument <code>trace =</code> muss derjenige Faktor angegeben werden, für den separate Linien (mit Legende) ausgegeben werden sollen.</p>
+<p>Im Plot werden per default Mittelwerte mit den 95 %-Konfidenzintervallen pro Stufe der unabhängigen Variable angezeigt. Mit <code>error_ci = FALSE</code> erhält man stattdessen die Standardfehler der Mittelwerte. In Grau werden ausserdem die beobachteten Datenpunkte angezeigt.</p>
 <div id="qwebr-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>weitere Optionen unter <code>help(afex_plot)</code></p>
-<p>Verschönern Sie den Plot, indem Sie folgende Elemente hinzufügen:</p>
+<p><code>afex_plot()</code> erstellt ein ggplot-Objekt, welches wir weiter verändern können. Jetzt mit weiteren Optionen (alle Optionen siehe <code>help(afex_plot)</code>:</p>
 <div id="qwebr-insertion-location-13"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Verschönern Sie den Plot weiter, indem Sie z.B. folgende Elemente hinzufügen:</p>
+<div id="qwebr-insertion-location-14"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="bedingte-haupteffekte" class="level3">
 <h3 class="anchored" data-anchor-id="bedingte-haupteffekte">3) Bedingte Haupteffekte</h3>
 <p>Bedingte Haupteffekte erhalten wir mit der Funktion <code>joint_tests(object, by)</code> aus dem <code>emmeans</code>-Package. Als erstes Argument wird das afex-Ergebnisobjekt der ANOVA benötigt. Für das Argument <code>by</code> muss derjenige Faktor angegeben werden, getrennt für dessen Stufen wir die bedingten Haupteffekte des jeweils anderen Faktors erhalten wollen.</p>
-<p>Hier interessieren wir uns für die bedingten Haupteffekte des within-subject Faktors <code>messzeitpunkt</code> (getrennt für - by - die Stufen des between-subjects Faktors <code>bedingung</code>).</p>
-<div id="qwebr-insertion-location-14"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="post-hoc-einzelvergleiche-für-die-bedingten-haupteffekte" class="level3">
-<h3 class="anchored" data-anchor-id="post-hoc-einzelvergleiche-für-die-bedingten-haupteffekte">4) Post-hoc-Einzelvergleiche für die bedingten Haupteffekte</h3>
-<p>Die bedingten Haupteffekte zeigen nur, dass es insgesamt signifikante Unterschiede zwischen den Messzeitpunkten gibt. Jetzt wollen wir noch wissen, welche Messzeitpunkten sich jeweils signifikant unterscheiden (und welche nicht).</p>
-<p>Um diese Einzelvergleiche/Kontraste durchführen zu können, muss zuerst ein emmeans-Objekt (hier: result) erstellt werden, und zwar für die Interaktion <code>messzeitpunkt * bedingung</code>:</p>
+<p>Trotz der knappen Nicht-Signifikanz des Interaktionseffekts im Beispiel wollen wir uns hier die bedingten Haupteffekte aus beiden Richtungen anschauen: sowohl den Vergleich der Bildungsstufen der Mutter separat für (= <code>by</code>) die Stufen der Bildung des Vaters als auch andersherum.</p>
+<p>Bedingte Haupteffekte <code>bildung_mutter</code>:</p>
 <div id="qwebr-insertion-location-15"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Post-hoc-Einzelvergleiche zwischen den Zeitpunkten (simple = “messzeitpunkt”) getrennt für die beiden Bedingungen:</p>
+<p>Bedingte Haupteffekte <code>bildung_vater</code>:</p>
 <div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Polynomiale Trendtests in Bezug auf den Zeitverlauf (simple = “messzeitpunkt”) getrennt für die beiden Bedingungen:</p>
+<p>In diesem Fall entsprechen die Tests für bedingte Haupteffekte den Einzelvergleichen Bildung hoch vs.&nbsp;niedrig eines Elternteils auf einer bestimmten Bildungsstufe des anderen Elternteils. Daher können wir alternativ auch Einzelvergleiche rechnen. Dazu muss zuerst ein <code>emmeans</code>-Objekt für den Interaktionseffekt erstellt werden:</p>
 <div id="qwebr-insertion-location-17"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Jetzt können wir <code>pairs()</code> mit <code>simple</code> für denjenigen Faktor verwenden, für den die bedingten Haupteffekte berechnet werden sollen. Ausserdem gibt es eine Funktion <code>eff_size()</code>, mit der Cohens’ d für die Vergleiche berechnet werden kann.</p>
+<p>Bedingte Haupteffekte <code>bildung_mutter</code>:</p>
+<div id="qwebr-insertion-location-18"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Bedingte Haupteffekte <code>bildung_vater</code>:</p>
+<div id="qwebr-insertion-location-19"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Vergleiche aller vier Bedingungen untereinander (inkl. “diagonale Bedingungen”, d.h. Bedingungen, die sich auf beiden Faktoren unterscheiden), jetzt einmal ohne und einmal mit Alpha-Korrektur:</p>
+<div id="qwebr-insertion-location-20"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Als Matrix:</p>
+<div id="qwebr-insertion-location-21"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Hier als Plot mit Konfidenzintervallen + Pfeilen, deren Nicht-Überschneidung von zwei Bedingungen Signifikanz anzeigt:</p>
+<div id="qwebr-insertion-location-22"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Und zuletzt hier als Pairwise-P-value-Plot:</p>
+<div id="qwebr-insertion-location-23"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 
 
@@ -2100,12 +2135,12 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{mayer,
   author = {Mayer, Boris},
-  title = {Anova {Demo}},
-  url = {https://psylu.github.io/anova_demo/pages/anova_demo_1.html},
+  title = {2 x 2 {Between} {Design} {ANOVA}},
+  url = {https://psylu.github.io/anova_demo/pages/anova_demo_between.html},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-mayer" class="csl-entry quarto-appendix-citeas" role="listitem">
-Mayer, Boris. n.d. <span>“Anova Demo.”</span> <a href="https://psylu.github.io/anova_demo/pages/anova_demo_1.html">https://psylu.github.io/anova_demo/pages/anova_demo_1.html</a>.
+Mayer, Boris. n.d. <span>“2 x 2 Between Design ANOVA.”</span> <a href="https://psylu.github.io/anova_demo/pages/anova_demo_between.html">https://psylu.github.io/anova_demo/pages/anova_demo_between.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

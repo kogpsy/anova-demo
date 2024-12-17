@@ -12,16 +12,13 @@ website:
   title: Anova Demo
   site-url: https://psylu.github.io/anova_demo
   reader-mode: true
-  navbar:
-    background: secondary
-    left:
-    - href: pages/anova_demo_1.qmd
-
+  
   sidebar:
     style: floating
     search: true
     contents:
-    - pages/anova_demo_1.qmd
+    - pages/anova_demo_between.qmd
+    - pages/anova_demo_mixed.qmd
 format:
   html:
     theme:

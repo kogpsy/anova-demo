@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://psylu.github.io/anova_demo/pages/anova_demo_1.html</loc>
-    <lastmod>2024-12-17T16:17:07.710Z</lastmod>
+    <loc>https://psylu.github.io/anova_demo/pages/anova_demo_mixed.html</loc>
+    <lastmod>2024-12-17T22:03:18.406Z</lastmod>
   </url>
   <url>
     <loc>https://psylu.github.io/anova_demo/index.html</loc>
     <lastmod>2024-12-17T15:32:24.525Z</lastmod>
+  </url>
+  <url>
+    <loc>https://psylu.github.io/anova_demo/pages/anova_demo_between.html</loc>
+    <lastmod>2024-12-17T22:02:55.570Z</lastmod>
   </url>
 </urlset>

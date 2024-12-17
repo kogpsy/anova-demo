@@ -7,5 +7,11 @@
   },
   "pages/anova_demo_1.qmd": {
     "anova_demo_1.html": "97163ebb"
+  },
+  "pages/anova_demo_between.qmd": {
+    "anova_demo_between.html": "18ea0ea6"
+  },
+  "pages/anova_demo_mixed.qmd": {
+    "anova_demo_mixed.html": "d7b4a674"
   }
 }
