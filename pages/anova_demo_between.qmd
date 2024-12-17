@@ -1,0 +1,253 @@
+---
+title: "2 x 2 Between Design ANOVA"
+author: "Boris Mayer"
+format: 
+  html:
+    resources:
+      - ../data/akademisch.csv         # Include just the CSV
+engine: knitr
+filters:
+  - webr
+# webr:
+#   packages:
+#     - tidyverse
+license: CC BY
+citation: true
+---
+
+```{webr-r}
+#| context: setup
+
+# download all libraries
+library(tidyverse)
+library(afex)
+library(emmeans)
+library(car)
+# load data in workspace
+download.file("https://kogpsy.github.io/anova-demo/data/akademisch.csv", 
+              "akademisch.csv")
+```
+
+
+
+## Packages laden
+
+```{webr-r}
+library(tidyverse)
+library(afex)
+library(emmeans)
+library(car)
+```
+
+
+## A) Daten
+
+
+### 1) Daten einlesen und konvertieren 
+
+Lesen Sie den Datensatz `akademisch` ein und konvertieren Sie die Variablen `bildung_vater` und `bildung_mutter` zu Faktoren. Definieren Sie für beide `niedrig` als erste Faktorstufe und `hoch` als zweite Faktorstufe. 
+
+```{webr-r}
+akademisch <- read_csv("akademisch.csv") |> 
+    mutate(bildung_vater = factor(bildung_vater, levels = (c("niedrig", "hoch"))),
+           bildung_mutter = factor(bildung_mutter, levels = (c("niedrig", "hoch"))))
+
+akademisch # Datensatz anschauen
+```
+
+
+
+### 3) Mittelwerte berechnen
+
+Berechnen Sie mittels `group_by()` und `summarize()` die Mittelwerte von `akad_swk` getrennt nach `bildung_vater` und `bildung_mutter`.
+
+```{webr-r}
+akademisch |> 
+  group_by(bildung_mutter, bildung_vater) |> 
+  summarize(mean_swk = mean(akad_swk),
+            .groups = "drop")
+```
+
+
+
+## B) 2 x 2 ANOVA mit afex und emmeans
+
+### 1) ANOVA-Modell berechnen
+
+Führen Sie die 2x2 Between ANOVA mit `aov_4()` durch:
+
+```{webr-r}
+anovaBETWEEN <- aov_4(akad_swk ~ bildung_mutter * bildung_vater + (1 | id), data = akademisch)
+
+summary(anovaBETWEEN)
+```
+
+Für den Levene-Test benutzen wir `leveneTest()` aus car:
+
+```{webr-r}
+leveneTest(akad_swk ~ bildung_mutter * bildung_vater, data = akademisch, center = median)
+```
+
+Leider erhalten wir keinen Gesamteffekt. Diesen bekommen wir als letzte Zeile hier:
+
+```{webr-r}
+summary(lm(akad_swk ~ bildung_mutter * bildung_vater, data = akademisch))
+```
+
+### 2) Fokus: Effektgrössen
+
+Standardmässig werden (wie z.B. auch in jamovi oder SPSS) die partiellen Effektgrössen berechnet. Diese werden bei experimentell manipulierten Faktoren empfohlen. Bei beobachteten Faktoren wie in diesem Beispiel sollte man auf nicht-partielle Effektgrössen zurückgreifen: 
+
+```{webr-r}
+anovaBETWEEN_obs <- aov_4(akad_swk ~ bildung_mutter * bildung_vater + (1 | id), data = akademisch, observed = c("bildung_mutter", "bildung_vater"))
+
+summary(anovaBETWEEN_obs)
+```
+
+Um das besser zu verstehen, müssen wir dem Modell noch etwas "unter die Haube schauen":
+
+```{webr-r}
+anovaBETWEEN_obs$Anova
+
+anovaBETWEEN_obs$Anova$`Sum Sq` |> round(3)
+```
+
+Wir berechnen beispielhaft das partielle $\hat\eta^2_p$ und nicht-partielle $\hat\eta^2$ für den Haupteffekt von "Bildung Mutter (BM)":
+
+$\hat\eta^2_{pBM} = \frac{QS_{BM}}{QS_{BM} + QS_{Res}} = \frac{9.122}{9.122 + 143.216} = `r 9.122/(9.122 + 143.216)`$
+
+$\hat\eta^2_{pBM} = \frac{QS_{BM}}{QS_{TOT}} = \frac{9.122}{9.122 + 0.027 + 1.487 + 143.216} = `r 9.122/(9.122 + 0.027 + 1.487 + 143.216)`$
+
+Wenn die Faktoren als `observed` definiert sind, kann man beide (partielle und nicht-partielle) Effektgrössen auch direkt anfordern:
+
+```{webr-r}
+anovaBETWEEN_obs2 <- aov_4(akad_swk ~ bildung_mutter * bildung_vater + (1 | id), data = akademisch, observed = c("bildung_mutter", "bildung_vater"), anova_table = list(es = c("ges", "pes")))
+
+summary(anovaBETWEEN_obs2)
+```
+
+Wenn das nicht der Fall ist, wird bei Anforderung beider Effektgrössen `pes` und `ges` für beide die partielle Effektgrösse ausgegeben, weil diese bei experimentell manipulierten Variablen auch dem `ges` (generalized eta square) entspricht:
+
+```{webr-r}
+anovaBETWEEN_eff <- aov_4(akad_swk ~ bildung_mutter * bildung_vater + (1 | id), data = akademisch, anova_table = list(es = c("ges", "pes")))
+
+summary(anovaBETWEEN_eff)
+```
+
+Man kann auch nur **einen** von beiden Faktoren als `observed` definieren, dann wird  nur die Quadratsumme dieses Faktors im Nenner der Effektgrösse des anderen (manipulierten) Faktors sowie der Interaktion berücksichtigt. Es handelt sich dann um eine semi-partielle Effektgrösse. Diese Möglichkeit schauen wir hier aber nicht an. 
+
+### 2) afex-Plot der Mittelwerte
+
+Für den Plot verwenden wir die Funktion `afex_plot(object, x)`.
+
+Als erstes Argument der Funktion wird das Ergebnisobjekt der ANOVA benötigt. Für das Argument `x =` muss die Gruppierungsvariable/Faktor angegeben werden.
+Für das Argument `trace =` muss derjenige Faktor angegeben werden, für den separate Linien (mit Legende) ausgegeben werden sollen.
+
+Im Plot werden per default Mittelwerte mit den 95 %-Konfidenzintervallen pro Stufe der unabhängigen Variable angezeigt. Mit `error_ci = FALSE` erhält man stattdessen die Standardfehler der Mittelwerte. In Grau werden ausserdem die beobachteten Datenpunkte angezeigt.
+
+
+```{webr-r}
+afex_plot(object = anovaBETWEEN,
+          x = "bildung_mutter",
+          trace = "bildung_vater")
+```
+
+`afex_plot()` erstellt ein ggplot-Objekt, welches wir weiter verändern können.
+Jetzt mit weiteren Optionen (alle Optionen siehe `help(afex_plot)`:
+
+```{webr-r}
+p1 <- afex_plot(object = anovaBETWEEN,
+               x = "bildung_mutter",
+               trace = "bildung_vater",
+               mapping = c("color", "shape"), 
+               # Faktorstufen sollen unterschiedliche Farben und Formen erhalten
+               dodge = 0.2, 
+               # Verschiebung der Faktorstufen reduzieren (default: 0.5)
+               error_ci = FALSE, 
+               # Standardfehler statt Konfidenzintervalle als Fehlermass
+               legend_title = "Bildung Vater",
+               # Legendentitel ist nur hier anpassbar! (nicht mit ggplot())
+               data_plot = FALSE) 
+               # Datenpunkte weglassen
+```
+
+
+Verschönern Sie den Plot weiter, indem Sie z.B. folgende Elemente hinzufügen:
+```{webr-r}
+p1 +
+    scale_color_manual(values = c("#000000", "#E69F00")) +
+    scale_y_continuous(limits = c(4, 6)) +
+    theme_classic() +                                     
+    ggtitle("Bildung der Eltern und Selbstwirksamkeit") +    
+    xlab("Bildung Mutter") +                        
+    ylab("Akademische SWK")
+```
+
+### 3) Bedingte Haupteffekte
+
+Bedingte Haupteffekte erhalten wir mit der Funktion `joint_tests(object, by)` aus dem `emmeans`-Package. Als erstes Argument wird das afex-Ergebnisobjekt der ANOVA benötigt. Für das Argument `by` muss derjenige Faktor angegeben werden, getrennt für dessen Stufen wir die bedingten Haupteffekte des jeweils anderen Faktors erhalten wollen.
+
+Trotz der knappen Nicht-Signifikanz des Interaktionseffekts im Beispiel wollen wir uns hier die bedingten Haupteffekte aus beiden Richtungen anschauen: sowohl den Vergleich der Bildungsstufen der Mutter separat für (= `by`) die Stufen der Bildung des Vaters als auch andersherum. 
+
+Bedingte Haupteffekte `bildung_mutter`:
+
+```{webr-r}
+joint_tests(anovaBETWEEN, by = "bildung_vater")
+```
+
+Bedingte Haupteffekte `bildung_vater`:
+
+```{webr-r}
+joint_tests(anovaBETWEEN, by = "bildung_mutter")
+```
+
+In diesem Fall entsprechen die Tests für bedingte Haupteffekte den Einzelvergleichen Bildung hoch vs. niedrig eines Elternteils auf einer bestimmten Bildungsstufe des anderen Elternteils. Daher können wir alternativ auch Einzelvergleiche rechnen. Dazu muss zuerst ein `emmeans`-Objekt für den Interaktionseffekt erstellt werden: 
+
+```{webr-r}
+compar <- emmeans(anovaBETWEEN, ~ bildung_mutter * bildung_vater)
+```
+
+Jetzt können wir `pairs()` mit `simple` für denjenigen Faktor verwenden, für den die bedingten Haupteffekte berechnet werden sollen. Ausserdem gibt es eine Funktion `eff_size()`, mit der Cohens' d für die Vergleiche berechnet werden kann.
+
+Bedingte Haupteffekte `bildung_mutter`:
+
+```{webr-r}
+pairs(compar, simple = "bildung_mutter")
+```
+
+Bedingte Haupteffekte `bildung_vater`:
+
+```{webr-r}
+pairs(compar, simple = "bildung_vater")
+```
+
+
+Vergleiche aller vier Bedingungen untereinander (inkl. "diagonale Bedingungen", d.h. Bedingungen, die sich auf beiden Faktoren unterscheiden), jetzt einmal ohne und einmal mit Alpha-Korrektur:
+
+```{webr-r}
+pairs(compar, adjust = "none")
+pairs(compar, adjust = "tukey")
+```
+
+Als Matrix:
+
+```{webr-r}
+pwpm(compar)
+```
+
+Hier als Plot mit Konfidenzintervallen + Pfeilen, deren Nicht-Überschneidung von zwei Bedingungen Signifikanz anzeigt:
+
+```{webr-r}
+plot(compar, comparisons = TRUE)
+```
+
+Und zuletzt hier als Pairwise-P-value-Plot:
+
+```{webr-r}
+pwpp(compar)
+```
+
+
+
+
+

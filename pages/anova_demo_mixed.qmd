@@ -1,5 +1,5 @@
 ---
-title: "Anova Demo"
+title: "2 x 3 Mixed Design ANOVA"
 author: "Boris Mayer"
 format: 
   html:
@@ -22,7 +22,7 @@ citation: true
 library(tidyverse)
 library(afex)
 library(emmeans)
-library(car) # für Levene-Test
+library(car)
 # load data in workspace
 download.file("https://kogpsy.github.io/anova-demo/data/therapie.csv", 
               "therapie.csv")
@@ -36,7 +36,7 @@ download.file("https://kogpsy.github.io/anova-demo/data/therapie.csv",
 library(tidyverse)
 library(afex)
 library(emmeans)
-library(car) # für Levene-Test
+library(car)
 ```
 
 
@@ -89,7 +89,8 @@ Berechnen Sie mittels `group_by()` und `summarize()` die Mittelwerte von `wohlbe
 ```{webr-r}
 therapie_means <- therapie_long |> 
   group_by(bedingung, messzeitpunkt) |> 
-  summarize(wohlbefinden = mean(wohlbefinden))
+  summarize(wohlbefinden = mean(wohlbefinden),
+            .groups = "drop")
 
 therapie_means # Mittelwerte anschauen
 ```
@@ -223,6 +224,9 @@ contrast(object = result_poly, method = "poly", adjust = "none")
 
 
 
+```{webr-r}
+eff_size(result, sigma = sigma(anovaMIXED), edf = df.residual(anovaMIXED))
+```
 
 
 
