@@ -61,10 +61,7 @@ therapie # Datensatz anschauen
 
 ### 2) Datensatz transformieren
 
-Führen Sie eine wide-to-long Transformation durch und bilden Sie damit einen Dataframe `therapie_long` mit einem messwiederholten Faktor `messzeitpunkt` und der (Outcome-)Variablen `wohlbefinden`. 
-
-Definieren Sie die Variable `messzeitpunkt` als Faktor mit den Faktorstufen "beginn", "mitte" und "ende" (in dieser Reihenfolge).
-
+Führen Sie eine wide-to-long Transformation durch und bilden Sie damit einen Dataframe `therapie_long` mit einer Variable `messzeitpunkt` und der (Outcome-)Variablen `wohlbefinden`. 
 
 ```{webr-r}
 therapie_long <- therapie |>
@@ -73,16 +70,17 @@ therapie_long <- therapie |>
                  values_to = "wohlbefinden")
 
 therapie_long # anschauen
+```
 
+Definieren Sie die Variable `messzeitpunkt` als Faktor mit den Faktorstufen "beginn", "mitte" und "ende" (in dieser Reihenfolge).
+
+```{webr-r}
 therapie_long <-  therapie_long |>  
     mutate(messzeitpunkt = factor(messzeitpunkt, 
                                   levels = c("beginn", "mitte", "ende")))
 
 levels(therapie_long$messzeitpunkt) # Faktorstufenreihenfolge bestätigen
 ```
-
-
-
 
 ### 3) Mittelwerte berechnen
 
@@ -100,66 +98,14 @@ Wir können hier schon sehen, dass das Wohlbefinden - rein deskriptiv - in der K
 
 
 
-## B) Plotten mit `{ggplot2}`
+## B) Zweifaktorielle Mixed Design ANOVA mit afex und emmeans
 
-### 1) Plotten der Mittelwerte
+### 1) Mixed Design ANOVA
 
-Plotten Sie die oben berechneten Mittelwerte mittels eines Liniendiagramms  mit zusätzlichen Punkten mit den drei Messzeitpunkten auf der X-Achse, den  Wohlbefindens-Werten auf der Y-Achse und mit Bedingung als (farbliche) Gruppierungsvariable.
-
-Beachten Sie, dass `geom_line()` ein zusätzliches `group`-Argument in `aes()` benötigt, um zu wissen, welche Punkte mit Linien verbunden werden sollen. Das allgemeine  `color = bedingung` der `ggplot()` Funktion genügt hier nicht (wird aber trotzdem benötigt, um Linien und Punkte mit nach Geschlecht unterschiedlichen Farben zu erhalten).
-    
-    
-```{webr-r}
-p <- therapie_means |> 
-    ggplot(aes(x = messzeitpunkt, y = wohlbefinden, color = bedingung))
-
-p +
-  geom_line(aes(group = bedingung)) +
-  geom_point(size = 3) +
-  scale_color_manual(values = c("#000000", "#E69F00")) 
-```
-
-
-Hier wird automatisch nur derjenige Auschnitt der `wohlbefindens`-Skala dargestellt, in dem sich die zu plottenden Mittelwerte befinden (diese liegen zwischen 3.33 und 4.23, s.o.). Dadurch wirkt es hier so, als gäbe es extrem grosse Mittelwertsunterschiede. Relativ zur Gesamtskala (1 bis 6) sind diese Unterschiede aber nicht ganz so bedeutsam wie es hier den Anschein erweckt.
-
-
-### 2) Plot verfeinern
-
-Daher plotten wir noch einmal und geben jetzt mit Hilfe von `scale_y_continuous()` an, dass die Y-Achse von `1` bis `6` gehen soll. Ausserdem soll der Plot noch (weiter) verschönert werden: er soll einen weissen Hintergrund bekommen sowie einen Titel und bessere korrektere Achsen- und Legendenbeschriftungen.
-
-Auch die Beschriftung der X-Achse lässt noch zu Wünschen übrig. Dafür benutzen wir `scale_x_discrete()` und geben im Argument `labels` einen character vector mit den richtigen (gross geschriebenen) Zeitpunkten an.
-
-Das Hauptargument von `scale_y_continuous()` ist `limits = c(wert_beginn, wert_ende)`, ausserdem kann mit `breaks` festgelegt werden, welche Werte-Abstände ("Ticks") auf der Achse dargestellt werden (Probieren Sie es zuerst ohne das `breaks`-Argument). 
-
-```{webr-r}
-p +
-  geom_line(aes(group = bedingung)) +
-  geom_point(size = 3) +
-  scale_color_manual(values = c("#000000", "#E69F00")) +
-  scale_y_continuous(limits = c(1, 6), breaks = 1:6) +
-  scale_x_discrete(labels = c("Beginn", "Mitte", "Ende")) +
-  theme_classic(base_size = 12) +
-  ggtitle("Wohlbefinden im Therapieverlauf") +
-  xlab("Messzeitpunkt") +
-  ylab("Wohlbefinden") +
-  labs(color = "Bedingung")
-```
-
-
-## C) Zweifaktorielle ANOVA mit Messwiederholung mit afex und emmeans
-
-### 1) Mixed-Design-ANOVA
-
-Führen Sie die Mixed-Design-ANOVA mit `aov_4()` durch
+Führen Sie die Mixed Design ANOVA mit `aov_4()` durch
 
 ```{webr-r}
 anovaMIXED <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), 
-                    data = therapie_long)
-
-anovaMIXED_obs <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), observed = c("bedingung", "messzeitpunkt"),
-                   data = therapie_long)
-
-anovaMIXED_eff <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), anova_table = list(es = c("ges", "pes")),
                     data = therapie_long)
 
 summary(anovaMIXED)
@@ -172,8 +118,6 @@ Für die Effektstärke Generalized Eta-Square (ges) brauchen wir noch den ANOVA-
 
 ```{webr-r}
 anovaMIXED$anova_table
-anovaMIXED_obs$anova_table
-anovaMIXED_eff$anova_table
 ```
 
 Hier werden standardmässig (unabhängig vom Ergebnis des Mauchly-Tests) die 
@@ -188,6 +132,24 @@ leveneTest(wohlbefinden ~ bedingung, data = therapie_long, center = median)
 
 
 nicht signifikant (alpha = 0.10), Voraussetzung der Homoskedastizität erfüllt
+
+```{webr-r}
+
+anovaMIXED_obs <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), observed = c("bedingung", "messzeitpunkt"),
+                   data = therapie_long)
+anovaMIXED_obs$anova_table
+anovaMIXED_eff$anova_table
+
+```
+
+```{webr-r}
+
+anovaMIXED_eff <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), anova_table = list(es = c("ges", "pes")),
+                    data = therapie_long)
+
+anovaMIXED_eff$anova_table
+
+```
 
 
 ### 2) afex-Plot der Mittelwerte
