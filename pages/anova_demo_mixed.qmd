@@ -50,7 +50,7 @@ library(car)
 
 Lesen Sie den Datensatz `therapie` ein und konvertieren Sie die Variablen `id` und `bedingung` zu Faktoren:
 
-```{webr-r message=FALSE, warning=FALSE}
+```{webr-r}
 therapie <- read_csv("therapie.csv") # einlesen
 
 therapie <- therapie |> 
