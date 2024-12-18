@@ -29,6 +29,9 @@ download.file("https://kogpsy.github.io/anova-demo/data/therapie.csv",
 ```
 
 
+In diesem Beispiel soll in einem fiktiven Datensatz von $n=50$ Personen untersucht werden, inwiefern das Wohlbefinden sich über drei (gleichabständige) Messzeitpunkte hinweg verändert, und zwar zum einen in einer Therapiegruppe $(n=25)$ und zum anderen in einer Kontrollgruppe $(n=25)$.
+
+Von Interesse ist daher hauptsächlich die Interaktion von (Therapie-)Bedingung und Messzeitpunkt, da sie die Unterschiedlichkeit der Verläufe zwischen beiden Gruppen testet und damit die Wirksamkeit der therapeutischen Intervention.
 
 ## Packages laden
 
@@ -47,7 +50,7 @@ library(car)
 
 Lesen Sie den Datensatz `therapie` ein und konvertieren Sie die Variablen `id` und `bedingung` zu Faktoren:
 
-```{webr-r}
+```{webr-r message=FALSE, warning=FALSE}
 therapie <- read_csv("therapie.csv") # einlesen
 
 therapie <- therapie |> 
@@ -79,31 +82,34 @@ therapie_long <-  therapie_long |>
     mutate(messzeitpunkt = factor(messzeitpunkt, 
                                   levels = c("beginn", "mitte", "ende")))
 
-levels(therapie_long$messzeitpunkt) # Faktorstufenreihenfolge bestätigen
+levels(therapie_long$messzeitpunkt) # Reihenfolge bestätigen
 ```
+
+Zusammenfassung mit `summary()`:
+
+```{webr-r}
+summary(therapie_long)
+```
+
 
 ### 3) Mittelwerte berechnen
 
-Berechnen Sie mittels `group_by()` und `summarize()` die Mittelwerte von `wohlbefinden` getrennt nach `bedingung` und `messzeitpunkt` und speichern Sie diese in einem Dataframe `therapie_means` ab.
+Berechnen Sie mittels `group_by()` und `summarize()` die Mittelwerte von `wohlbefinden` getrennt nach `bedingung` und `messzeitpunkt`.
 
 ```{webr-r}
-therapie_means <- therapie_long |> 
+therapie_long |> 
   group_by(bedingung, messzeitpunkt) |> 
   summarize(wohlbefinden = mean(wohlbefinden),
             .groups = "drop")
-
-therapie_means # Mittelwerte anschauen
 ```
 
-Wir können hier schon sehen, dass das Wohlbefinden - rein deskriptiv - in der Kontrollgruppe eher abnimmt und in der Therapiegruppe eher zunimmt. 
 
 
-
-## B) Zweifaktorielle Mixed Design ANOVA mit afex und emmeans
+## B) 2 x 3 Mixed Design ANOVA mit afex und emmeans
 
 ### 1) Mixed Design ANOVA
 
-Führen Sie die Mixed Design ANOVA mit `aov_4()` durch
+Führen Sie die Mixed Design ANOVA mit `aov_4()` durch.
 
 ```{webr-r}
 anovaMIXED <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), 
@@ -113,44 +119,23 @@ summary(anovaMIXED)
 ```
 
 
-Mauchly-Test ist nicht signifikant, daher kann die Sphärizitätsannahme aufrecht-erhalten werden (keine Sphärizitätskorrektur erforderlich).
-
 Für die Effektstärke Generalized Eta-Square (ges) brauchen wir noch den ANOVA-Table:
 
 ```{webr-r}
 anovaMIXED$anova_table
 ```
 
+
 Hier werden standardmässig (unabhängig vom Ergebnis des Mauchly-Tests) die 
 Greenhouse-Geisser(GG)-korrigierten F-Tests berichtet.
 
 
-Für den Levene-Test benutzen wir `leveneTest()` aus car 
+Für den Levene-Test benutzen wir `leveneTest()` aus car: 
 
 ```{webr-r}
 leveneTest(wohlbefinden ~ bedingung, data = therapie_long, center = median)
 ```
 
-
-nicht signifikant (alpha = 0.10), Voraussetzung der Homoskedastizität erfüllt
-
-```{webr-r}
-
-anovaMIXED_obs <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), observed = c("bedingung", "messzeitpunkt"),
-                   data = therapie_long)
-anovaMIXED_obs$anova_table
-anovaMIXED_eff$anova_table
-
-```
-
-```{webr-r}
-
-anovaMIXED_eff <- aov_4(wohlbefinden ~ bedingung + (messzeitpunkt | id), anova_table = list(es = c("ges", "pes")),
-                    data = therapie_long)
-
-anovaMIXED_eff$anova_table
-
-```
 
 
 ### 2) afex-Plot der Mittelwerte
@@ -159,40 +144,41 @@ Für den Plot verwenden wir die Funktion `afex_plot(object, x)`.
 
 Als erstes Argument der Funktion wird das Ergebnisobjekt der ANOVA benötigt. Für das Argument `x =` muss die Gruppierungsvariable/Faktor angegeben werden.
 Für das Argument `trace =` muss derjenige Faktor angegeben werden, für den separate Linien (mit Legende) ausgegeben werden sollen.
-Für Mixed-Designs sind weder die "normalen" noch die "within"-Fehlerbalken auf alle geschätzten Mittelwerte anwendbar. Deshalb wird empfohlen, bei Plots in Mixed-Designs auf Fehlerbalken/Konfidenzintervalle zu verzichten (`error = "none"`).
 
 In einem Mixed-Design wie unserem ist es am sinnvollsten, den Faktor `messzeitpunkt` auf der X-Achse darzustellen und getrennte Linien für den Between-Faktor `bedingung` zu verwenden. Der Legendentitel kann mit dem Argument `legend.title` angepasst werden.
 
-`afex_plot()` erstellt ein ggplot-Objekt, welches wir weiter verändern können.
+Wir erstellen mit `afex_plot()` ein ggplot-Objekt, welches wir weiter verändern können:
 
 ```{webr-r}
 p <- afex_plot(object = anovaMIXED,
                x = "messzeitpunkt",
                trace = "bedingung",
-               error = "none",
+               mapping = c("color", "shape"), 
+               dodge = 0.2,
+               error_ci = FALSE, 
                legend_title = "Bedingung")
-
-p
 ```
 
-weitere Optionen unter `help(afex_plot)`
 
 Verschönern Sie den Plot, indem Sie folgende Elemente hinzufügen:
 
 ```{webr-r}
-p +
-  theme_classic() +                               # Hintergrund weiss
-  ggtitle("Wohlbefinden im Therapieverlauf") +    # Titel hinzufügen
-  xlab("Messzeitpunkt") +                         # x-Achse beschriften
-  ylab("Wohlbefinden")                            # y-Achse beschriften
+p +    
+  scale_color_manual(values = c("#000000", "#E69F00")) +
+  scale_y_continuous(limits = c(1, 6), breaks = 1:6) +
+  scale_x_discrete(labels = c("Beginn", "Mitte", "Ende")) +
+  theme_classic() +                              
+  ggtitle("Wohlbefinden im Therapieverlauf") +    
+  xlab("Messzeitpunkt") +                         
+  ylab("Wohlbefinden")                          
 ```
 
 
 ### 3) Bedingte Haupteffekte
 
-Bedingte Haupteffekte erhalten wir mit der Funktion `joint_tests(object, by)` aus dem `emmeans`-Package. Als erstes Argument wird das afex-Ergebnisobjekt der ANOVA benötigt. Für das Argument `by` muss derjenige Faktor angegeben werden, getrennt für dessen Stufen wir die bedingten Haupteffekte des jeweils anderen Faktors erhalten wollen.
+Bedingte Haupteffekte erhalten wir mit der Funktion `joint_tests(object, by)` aus `emmeans`. Als erstes Argument wird das `afex`-Ergebnisobjekt der ANOVA benötigt. Für das Argument `by` muss derjenige Faktor angegeben werden, getrennt für dessen Stufen wir die bedingten Haupteffekte des jeweils anderen Faktors erhalten wollen.
 
-Hier interessieren wir uns für die bedingten Haupteffekte des within-subject Faktors `messzeitpunkt` (getrennt für - by - die Stufen des between-subjects Faktors `bedingung`). 
+Hier interessieren wir uns für die bedingten Haupteffekte des within-subject Faktors `messzeitpunkt` (getrennt für - `by` - die Stufen des between-subjects Faktors `bedingung`). 
 
 ```{webr-r}
 joint_tests(object = anovaMIXED, by = "bedingung")
@@ -203,31 +189,48 @@ joint_tests(object = anovaMIXED, by = "bedingung")
 
 Die bedingten Haupteffekte zeigen nur, dass es insgesamt signifikante Unterschiede zwischen den Messzeitpunkten gibt. Jetzt wollen wir noch wissen, welche Messzeitpunkten sich jeweils signifikant unterscheiden (und welche nicht).
 
-Um diese Einzelvergleiche/Kontraste durchführen zu können, muss zuerst ein emmeans-Objekt (hier: result) erstellt werden, und zwar für die Interaktion `messzeitpunkt * bedingung`:
+Um diese Einzelvergleiche/Kontraste durchführen zu können, muss zuerst ein `emmeans`-Objekt (hier: `compar`) erstellt werden, und zwar für die Interaktion `messzeitpunkt * bedingung`:
 
 ```{webr-r}
-result <- emmeans(object = anovaMIXED, specs = ~ messzeitpunkt * bedingung)
+compar <- emmeans(anovaMIXED, ~ messzeitpunkt * bedingung)
 ```
 
-Post-hoc-Einzelvergleiche zwischen den Zeitpunkten (simple = "messzeitpunkt") getrennt für die beiden Bedingungen:
+Post-hoc-Einzelvergleiche zwischen den Zeitpunkten (`simple = "messzeitpunkt"`) getrennt für die beiden Bedingungen:
 
 ```{webr-r}
-pairs(result, simple = "messzeitpunkt", adjust = "tukey")
+pairs(compar, simple = "messzeitpunkt", adjust = "tukey")
 ```
 
-Polynomiale Trendtests in Bezug auf den Zeitverlauf (simple = "messzeitpunkt") getrennt für die beiden Bedingungen:
+Plots für diese Vergleiche: 
 
 ```{webr-r}
-result_poly <- emmeans(object = anovaMIXED, specs = ~ messzeitpunkt | bedingung)
-contrast(object = result_poly, method = "poly", adjust = "none")
+plot(compar, by = "bedingung", comparisons = TRUE)
 ```
 
-
-
 ```{webr-r}
-eff_size(result, sigma = sigma(anovaMIXED), edf = df.residual(anovaMIXED))
+pwpp(compar, by = "bedingung")
 ```
 
 
+### 5) Kontrastanalysen für die bedingten Haupteffekte
 
+Wir wollen nun zusätzlich zu den Einzelvergleichen auch noch Kontrastanalysen für den Faktor `messzeitpunkt` innerhalb beider Bedingungen durchführen. Dazu muss zuerst nochmal ein `emmeans`-Objekt (hier: `contr`) erstellt werden (jetzt explizit für genau diese bedingten Haupteffekte):
+
+```{webr-r}
+contr <- emmeans(anovaMIXED, ~ messzeitpunkt | bedingung)
+```
+
+Wir wollen das Wohlbefinden zu `beginn` mit dem Durchschnitt des Wohlbefindens von `mitte` und `ende` vergleichen. Dazu muss ein Kontrast (hier: `kontrast`) spezifiziert werden und dieser dann mit `contrast()` evaluiert werden: 
+
+```{webr-r}
+kontrast <- list("Beginn vs. Mitte & Ende" = c(-1, 1/2, 1/2))
+contrast(object = contr, method = kontrast)
+```
+
+
+Zuletzt wollen wir noch Polynomiale Trendkontraste in Bezug auf den Zeitverlauf getrennt für die beiden Bedingungen testen. Dazu können wir dasselbe `emmeans`-Objekt benutzen und als Kontrast-Methode `poly` spezifizieren: 
+
+```{webr-r}
+contrast(object = contr, method = "poly", adjust = "none")
+```
 
