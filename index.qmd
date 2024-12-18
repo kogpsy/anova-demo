@@ -1,10 +1,12 @@
 ---
-title: "Welcome"
+title: "Welcome to ANOVAs with afex and emmeans"
 about:
     template: jolla
 ---
 
 
-KWM Labmeeting / Forschungskolloquium
+KWM Labmeeting
 
-December 18 2024
+December 18, 2024
+
+Boris Mayer
