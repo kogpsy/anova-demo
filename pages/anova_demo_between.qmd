@@ -49,7 +49,7 @@ library(car)
 
 Lesen Sie den Datensatz `akademisch` ein und konvertieren Sie die Variablen `bildung_vater` und `bildung_mutter` zu Faktoren. Definieren Sie für beide `niedrig` als erste Faktorstufe und `hoch` als zweite Faktorstufe. 
 
-```{webr-r message=FALSE, warning=FALSE}
+```{webr-r}
 akademisch <- read_csv("akademisch.csv") |> 
     mutate(bildung_vater = factor(bildung_vater, 
                                   levels = (c("niedrig", "hoch"))),
